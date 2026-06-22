@@ -1,0 +1,17 @@
++-------------------------------------------------+
+| :: Acceso al Sistema                      [X]   |
++-------------------------------------------------+
+|                                                 |
+|               [ LOGO COLEGIO ]                  |
+|                                                 |
+|      Usuario:                                   |
+|      [_________________________________]        |
+|                                                 |
+|      Contraseña:                                |
+|      [*********************************]        |
+|                                                 |
+|           [ INGRESAR ]   [ SALIR ]              |
+|                                                 |
+|  (i) Ingrese sus credenciales asignadas.        |
++-------------------------------------------------+
+Mapeo Swing: JDialog (para bloquear el resto de la app hasta loguearse), JTextField para usuario, JPasswordField para la contraseña.
