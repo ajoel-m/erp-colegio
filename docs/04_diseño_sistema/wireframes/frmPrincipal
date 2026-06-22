@@ -1,0 +1,19 @@
+Utilizaremos un diseño MDI (Multiple Document Interface) clásico
++-----------------------------------------------------------------------------+
+| :: ERP Colegio Señor de los Milagros - [ Módulo Principal ]       [-] [O] [X]|
++-----------------------------------------------------------------------------+
+| Archivo   Mantenimiento   Académico   Matrículas   Ayuda                    |
++-----------------------------------------------------------------------------+
+|                                                                             |
+|                                                                             |
+|                                                                             |
+|               ( El fondo puede tener el logo de la institución )            |
+|               ( Aquí se abrirán las demás ventanas internamente)            |
+|                                                                             |
+|                                                                             |
+|                                                                             |
+|                                                                             |
++-----------------------------------------------------------------------------+
+| Usuario: PCASTILLO  |  Rol: SECRETARIA  |  Año Lectivo Activo: 2026         |
++-----------------------------------------------------------------------------+
+Mapeo Swing: JFrame maximizado. Arriba un JMenuBar con JMenu y JMenuItem. En el centro un JDesktopPane. Abajo un JPanel que actúe como barra de estado (Status Bar).
