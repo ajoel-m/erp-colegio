@@ -1,0 +1,28 @@
+Permitirá registrar al alumno y vincular a su apoderado en la misma vista
+
++-----------------------------------------------------------------------------+
+| :: Gestión de Estudiantes                                             [X]   |
++-----------------------------------------------------------------------------+
+| [ Datos del Estudiante ]                                                    |
+| DNI:       [______________] [Buscar F2]  Estado: [ ACTIVO |v]               |
+| Nombres:   [_________________________]   F. Nacimiento: [ DD/MM/YYYY |v]    |
+| Apellidos: [_________________________]   Dirección: [_____________________] |
+|-----------------------------------------------------------------------------|
+| [ Vínculo Familiar (Apoderado) ]                                            |
+| DNI Apoderado: [______________] [Buscar F2] (Autocompleta si ya existe)     |
+| Nombres:       [_________________________]  Parentesco: [ MADRE      |v]    |
+| Teléfono:      [______________]             Correo:     [_________________] |
+|-----------------------------------------------------------------------------|
+|                                                                             |
+|  [ NUEVO ]  [ GUARDAR ]  [ EDITAR ]  [ DAR DE BAJA ]  [ LIMPIAR ]           |
+|                                                                             |
+|-----------------------------------------------------------------------------|
+| Búsqueda Rápida: [____________________]  (Filtra en la tabla)               |
+| +----------+------------------------+---------------+------------+-------+  |
+| | DNI      | Alumno                 | Apoderado     | Parentesco | Estado|  |
+| +----------+------------------------+---------------+------------+-------+  |
+| | 77123456 | Luna Morales, Joel     | Morales, Ana  | Madre      | Activo|  |
+| | 78901234 | Perez Garcia, Juan     | Perez, Carlos | Padre      | Activo|  |
+| +----------+------------------------+---------------+------------+-------+  |
++-----------------------------------------------------------------------------+
+Mapeo Swing: JInternalFrame. JDateChooser (librería externa JCalendar) para la fecha de nacimiento. Botones JButton agrupados.
