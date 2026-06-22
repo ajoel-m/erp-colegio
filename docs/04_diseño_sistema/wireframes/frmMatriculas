@@ -1,0 +1,41 @@
+Esquenmas básicos para definir la organización y funcionalidad de los frames del proyecto
+- frmMatriculas:
++-----------------------------------------------------------------------------+
+| :: Sistema ERP - Gestión de Matrícula                                 [X]   |
++-----------------------------------------------------------------------------+
+|                                                                             |
+|  [ Panel 1: Búsqueda y Datos del Estudiante ]                               |
+|  DNI Estudiante: [______________]  [ Buscar (F2) ]                          |
+|                                                                             |
+|  Nombres:  [..............................................................] |
+|  Apellidos:[..............................................................] |
+|  Edad:     [ 07 años ]            Estado del alumno: [ Inactivo ]           |
+|                                                                             |
+|-----------------------------------------------------------------------------|
+|                                                                             |
+|  [ Panel 2: Selección Académica ]                                           |
+|  Año Lectivo:   [ 2026       |v]    Turno:   [ MAÑANA         |v]           |
+|  Nivel:         [ Primaria   |v]    Grado:   [ 2do Grado      |v]           |
+|  Sección:       [ B          |v]    Vacantes Disponibles: [ 14 ]            |
+|                                                                             |
+|  Estado Matrícula: [ Regularizada |v]                                       |
+|                                                                             |
+|-----------------------------------------------------------------------------|
+|                                                                             |
+|  [ Panel 3: Validaciones del Sistema (Solo Lectura) ]                       |
+|  [X] Edad mínima validada según normativa.                                  |
+|  [X] Disponibilidad de vacantes confirmada.                                 |
+|                                                                             |
+|                                [ PROCESAR MATRÍCULA ]                       |
+|                                                                             |
+|-----------------------------------------------------------------------------|
+|                                                                             |
+|  [ Panel 4: Historial de Matrículas del Estudiante ]                        |
+|  +---------+------------+-----------+---------+--------------+-----------+  |
+|  | Año     | Nivel      | Grado     | Sección | Estado Mat.  | Promedio  |  |
+|  +---------+------------+-----------+---------+--------------+-----------+  |
+|  | 2025    | Primaria   | 1er Grado | B       | Regularizada | 16        |  |
+|  | 2024    | Inicial    | 5 Años    | A       | Regularizada | -         |  |
+|  +---------+------------+-----------+---------+--------------+-----------+  |
+|                                                                             |
++-----------------------------------------------------------------------------+
