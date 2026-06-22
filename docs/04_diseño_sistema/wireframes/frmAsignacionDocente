@@ -1,0 +1,23 @@
+Para conectar a los colaboradores (docentes) con las aulas y los cursos definidos en la frmConfigAcademica
+
++-----------------------------------------------------------------------------+
+| :: Asignación de Carga Académica                                      [X]   |
++-----------------------------------------------------------------------------+
+| Seleccione el Docente:                                                      |
+| Docente: [ Buscar por apellidos o DNI...                        |v]         |
+|-----------------------------------------------------------------------------|
+| Asignar a:                                                                  |
+| Año: [ 2026 |v]   Grado/Aula: [ 1er Grado - "A" (Primaria)      |v]         |
+|                                                                             |
+| Asignatura: [ Matemática - (Área Académica)                     |v]         |
+|                                                                             |
+| [ AGREGAR ASIGNACIÓN ]                                                      |
+|-----------------------------------------------------------------------------|
+| Carga académica actual del docente seleccionado:                            |
+| +-------+----------+-----------+---------+--------------------+          |  |
+| | Año   | Nivel    | Grado     | Sección | Asignatura         | [QUITAR] |  |
+| +-------+----------+-----------+---------+--------------------+          |  |
+| | 2026  | Primaria | 1er Grado | A       | Matemática         |   [X]    |  |
+| | 2026  | Primaria | 1er Grado | A       | Raz. Matemático    |   [X]    |  |
+| +-------+----------+-----------+---------+--------------------+          |  |
++-----------------------------------------------------------------------------+
