@@ -1,0 +1,22 @@
+Pantalla que usará Dirección antes de iniciar las matrículas para preparar la "oferta académica".
+
++-----------------------------------------------------------------------------+
+| :: Configuración del Año Lectivo y Aulas                              [X]   |
++-----------------------------------------------------------------------------+
+| [ Apertura de Año Lectivo ]                                                 |
+| Año: [ 2026 ]  Inicio: [ 01/03/2026 |v]  Fin: [ 20/12/2026 |v]  [ APERTURAR]|
+|-----------------------------------------------------------------------------|
+| [ Configuración de Vacantes por Grado/Sección (Solo años vigentes) ]        |
+| Año Lectivo: [ 2026 |v]   Nivel: [ Primaria |v]   Grado: [ 1er Grado |v]    |
+|                                                                             |
+| Sección a aperturar: [ A |v]   Turno: [ MAÑANA |v]   Vacantes: [ 30 ]       |
+|                                                                             |
+|                                                  [ AGREGAR AULA / SECCIÓN ] |
+|-----------------------------------------------------------------------------|
+| +-------+----------+-----------+---------+--------+----------+-----------+  |
+| | Año   | Nivel    | Grado     | Sección | Turno  | Vacantes | Ocupadas  |  |
+| +-------+----------+-----------+---------+--------+----------+-----------+  |
+| | 2026  | Primaria | 1er Grado | A       | Mañana | 30       | 0         |  |
+| | 2026  | Primaria | 1er Grado | B       | Tarde  | 25       | 0         |  |
+| +-------+----------+-----------+---------+--------+----------+-----------+  |
++-----------------------------------------------------------------------------+
