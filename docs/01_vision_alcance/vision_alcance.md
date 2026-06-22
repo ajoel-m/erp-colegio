@@ -30,3 +30,33 @@ No forman parte del MVP:
 - Integración con SIAGIE.
 
 [ Fase 1: MVP ] ──> [ Fase 2: Operación ] ──> [ Fase 3: Cierre y Reportes ] (Matrícula y Aulas)  (Asistencia y Notas)  (Libretas y Actas Oficiales)
+
+### 1.4  Stakeholders
+
+|Stakeholder|Interés|
+|---|---|
+|Director|Supervisión institucional|
+|Secretaria|Operación administrativa|
+|Docente|Consulta académica|
+|Administrador del sistema|Gestión técnica y seguridad|
+|Institución educativa|Uso del ERP|
+
+---
+
+## 1.5. Actores
+
+#### Administrador
+
+Responsable de usuarios, roles y permisos.
+
+#### Director
+
+Responsable de la administración académica general.
+
+#### Secretaria
+
+Responsable del registro de estudiantes, apoderados y matrículas.
+
+#### Docente
+
+Responsable de consultar información académica asignada.
