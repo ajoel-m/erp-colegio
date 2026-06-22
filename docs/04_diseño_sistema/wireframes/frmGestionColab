@@ -1,0 +1,19 @@
+Similar al de estudiante
++-----------------------------------------------------------------------------+
+| :: Gestión de Personal y Colaboradores                                [X]   |
++-----------------------------------------------------------------------------+
+| [ Datos Personales ]                                                        |
+| DNI:       [______________] [Buscar F2]                                     |
+| Nombres:   [_________________________]   Apellidos: [_____________________] |
+| Teléfono:  [______________]              Correo:    [_____________________] |
+|-----------------------------------------------------------------------------|
+| [ Datos Laborales e Institucionales ]                                       |
+| Cargo:        [ DOCENTE          |v]     Régimen:    [ CAS            |v]   |
+| F. Contrato:  [ DD/MM/YYYY |v]           Condición:  [ CONTRATADO     |v]   |
+|-----------------------------------------------------------------------------|
+| [ Acceso al Sistema ]                                                       |
+| Generar Usuario: [x] (Si se marca, habilita los campos)                     |
+| Usuario: [ jlunamo      ]    Rol: [ DOCENTE |v]   Clave: [ ********* ]      |
+|-----------------------------------------------------------------------------|
+|  [ NUEVO ]  [ GUARDAR ]  [ EDITAR ]  [ CESE LÓGICO ]                        |
++-----------------------------------------------------------------------------+
