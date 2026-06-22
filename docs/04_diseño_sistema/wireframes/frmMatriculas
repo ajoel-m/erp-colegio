@@ -39,3 +39,17 @@ Esquenmas básicos para definir la organización y funcionalidad de los frames d
 |  +---------+------------+-----------+---------+--------------+-----------+  |
 |                                                                             |
 +-----------------------------------------------------------------------------+
+
+Mapeo de Controles Java Swing sugeridos para este diseño:
+
+- Paneles: JPanel con bordes titulados (TitledBorder) para separar lógicamente la búsqueda, la selección académica y el historial.
+
+- Búsqueda: JTextField para el DNI y un JButton para buscar.
+
+- Datos en solo lectura: JTextField con la propiedad editable en false o simplemente JLabel para mostrar el nombre y edad sin que el usuario los modifique por error.
+
+- Selección: JComboBox para Año Lectivo, Nivel, Grado, Sección y Estado. Es vital que estos combos se carguen dinámicamente desde la base de datos (por ejemplo, el combo de secciones solo debe mostrar las que tienen vacantes > 0).
+
+- Validaciones: JCheckBox deshabilitados que el Controlador marca automáticamente cuando se cumplen las reglas de negocio (RN-13 y RN-14).
+
+- Historial: Un JTable envuelto en un JScrollPane.
