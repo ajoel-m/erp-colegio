@@ -1,0 +1,27 @@
+El panel de control gerencial para cerrar periodos y años (RN-24 y RN-25).
++-----------------------------------------------------------------------------+
+| :: Generación de Actas y Cierre de Año                                [X]   |
++-----------------------------------------------------------------------------+
+| [ 1. Generación de Actas Oficiales ]                                        |
+| Año: [ 2026 |v]   Nivel: [ Primaria |v]   Grado/Aula: [ 1er Grado "A" |v]   |
+|                                                                             |
+| +----------------------------------+-------------+-------+----------------+ |
+| | Estudiante                       | Prom. Anual | Letra | Situación Final| |
+| +----------------------------------+-------------+-------+----------------+ |
+| | NOBI NOBI, NOBITA                | 16.20       | A     | PROMOVIDO      | |
+| | PEREZ GARCIA, JUAN               | 10.10       | C     | REPITENTE      | |
+| +----------------------------------+-------------+-------+----------------+ |
+|                                                                             |
+| [ GENERAR Y FIRMAR ACTA ]   [ EXPORTAR A PDF ]                              |
+|-----------------------------------------------------------------------------|
+| [ 2. Cierre Institucional ]                                                 |
+| (i) El cierre del año lectivo bloquea permanentemente la modificación de    |
+| notas y asistencias del periodo 2026. Habilita matrícula para 2027.         |
+|                                                                             |
+| Estado Actual: [ VIGENTE ]                   [ EJECUTAR CIERRE DE AÑO ]     |
++-----------------------------------------------------------------------------+
+
+Mapeo Swing: Tablas de solo lectura. El botón "Ejecutar Cierre" debe tener un 
+JOptionPane.showConfirmDialog severo ("¿Está absolutamente seguro?") antes de ejecutar el UPDATE 
+en la tabla anios_lectivos. El botón de "Exportar a PDF" llamará a la librería JasperReports o 
+iTextPDF cuando se implemente.
