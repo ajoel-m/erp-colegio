@@ -1,0 +1,20 @@
++-------------------------------------------------+
+| :: Control de Asistencia de Personal      [X]   |
++-------------------------------------------------+
+|                                                 |
+|             [ 07:45:12 AM ]                     |
+|          12 de Febrero de 2026                  |
+|                                                 |
+| Ingrese su DNI para registrar su marcación:     |
+| [________________________________]              |
+|                                                 |
+|   [ MARCAR ENTRADA ]     [ MARCAR SALIDA ]      |
+|                                                 |
+|-------------------------------------------------|
+| Últimas marcaciones del día:                    |
+| > 07:40 - Carlos Perez - Entrada registrada     |
+| > 07:42 - Ana Morales - Entrada registrada      |
++-------------------------------------------------+
+
+Mapeo Swing: JTextField principal que se limpia automáticamente tras 
+cada marcación. Un hilo (Thread o Timer) actualizando el JLabel del reloj en tiempo real.
