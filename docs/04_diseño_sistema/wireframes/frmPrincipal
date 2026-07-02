@@ -17,3 +17,7 @@ Utilizaremos un diseño MDI (Multiple Document Interface) clásico
 | Usuario: PCASTILLO  |  Rol: SECRETARIA  |  Año Lectivo Activo: 2026         |
 +-----------------------------------------------------------------------------+
 Mapeo Swing: JFrame maximizado. Arriba un JMenuBar con JMenu y JMenuItem. En el centro un JDesktopPane. Abajo un JPanel que actúe como barra de estado (Status Bar).
+
+Modificación: Se deben agregar las nuevas opciones al JMenuBar para dar acceso a los módulos de la V1.0 según el rol del usuario.
+
+Nuevo Menú: Archivo | Mantenimiento | Académico | Matrículas | Asistencia | Evaluaciones | Cierre y Actas
