@@ -16,3 +16,8 @@
 |                                                                             |
 |                                                  [ GUARDAR CALIFICACIONES ] |
 +-----------------------------------------------------------------------------+
+
+
+Mapeo Swing: El JTable tendrá la propiedad isCellEditable activada únicamente en las celdas 
+correspondientes a las notas numéricas. Las columnas "Prom." y "Letra" serán de solo lectura y 
+se actualizarán dinámicamente usando el modelo de la tabla cuando la celda de nota pierda el foco.
