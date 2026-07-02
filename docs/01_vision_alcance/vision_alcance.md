@@ -1,45 +1,47 @@
 ### 1.1 Propósito
 
-Definir los requisitos funcionales y no funcionales para el desarrollo del Producto Mínimo Viable (MVP) de un ERP escolar orientado a instituciones educativas de nivel primario.
+Definir los requisitos funcionales y no funcionales para el desarrollo de la Versión 1.0 (V1.0) del ERP escolar, orientado a la gestión integral de instituciones educativas de nivel primario y secundario.
 
 ### 1.2 Objetivo del sistema
 
-Digitalizar los procesos esenciales de gestión institucional, permitiendo administrar estudiantes, apoderados, colaboradores, matrículas y planificación académica básica mediante una plataforma web centralizada.
+Digitalizar y centralizar los procesos de gestión institucional, permitiendo administrar la población estudiantil, personal académico, procesos de matrícula, control de asistencia, evaluación académica y emisión de documentos oficiales, mediante una aplicación de escritorio.
 
 ### 1.3 Alcance del MVP
 
-El MVP cubrirá:
+La Versión 1.0 cubrirá el ciclo académico completo:
 
-- Seguridad y control de acceso.
-- Gestión de estudiantes.
-- Gestión de apoderados.
-- Gestión de colaboradores.
-- Gestión de matrículas.
-- Gestión de grados y secciones.
-- Gestión de asignaturas.
-- Asignación docente.
-- Gestión básica de horarios.
+- Módulo de Seguridad: Control de acceso, roles y permisos de usuarios.
 
-No forman parte del MVP:
+- Módulo de Personas: Gestión de estudiantes, apoderados (y su vinculación) y colaboradores.
 
-- Registro de asistencia.
-- Gestión de evaluaciones.
-- Cálculo de notas.
-- Actas oficiales.
-- Reportes institucionales avanzados.
-- Integración con SIAGIE.
+- Módulo Académico (Configuración): Gestión de años lectivos, periodos, grados, secciones, asignaturas y asignación de carga docente con control de horarios.
 
-[ Fase 1: MVP ] ──> [ Fase 2: Operación ] ──> [ Fase 3: Cierre y Reportes ] (Matrícula y Aulas)  (Asistencia y Notas)  (Libretas y Actas Oficiales)
+- Módulo de Matrículas: Registro de matrículas regulares y extemporáneas con validación de vacantes y edad.
+
+- Módulo de Operación Diaria: Registro de asistencia de estudiantes y colaboradores.
+
+- Módulo de Evaluación: Definición de ponderaciones, registro de evaluaciones y cálculo automático de notas o promedios.
+
+- Módulo de Cierre y Reportes: Generación de actas oficiales, promedios anuales, situaciones finales (Promovido/Repite) y reportes institucionales.
+
+No forman parte de la V1.0 (Futura Escalabilidad):
+
+- Integración directa con la API del SIAGIE (Ministerio de Educación).
+
+- Módulo de facturación o control de pagos/pensiones.
+
+Flujo del Sistema:
+[ Configuración y Matrícula ] ──> [ Operación: Asistencia y Notas ] ──> [ Cierre: Actas y Reportes ]
 
 ### 1.4  Stakeholders
 
 |Stakeholder|Interés|
 |---|---|
-|Director|Supervisión institucional|
-|Secretaria|Operación administrativa|
-|Docente|Consulta académica|
-|Administrador del sistema|Gestión técnica y seguridad|
-|Institución educativa|Uso del ERP|
+|Director|Supervisión institucional reportes estadísticos y aprobación de documentos oficiales.|
+|Secretaria|Operación administrativa eficiente (matrículas, atención a apoderados, constancias).|
+|Docente|Gestión ágil de sus aulas, toma de asistencia y registro de calificaciones.|
+|Administrador del sistema|Gestión técnica, auditoría y seguridad de la información.|
+|Institución educativa|Modernización, trazabilidad de datos y reducción de tiempos operativos.|
 
 ---
 
@@ -47,16 +49,19 @@ No forman parte del MVP:
 
 #### Administrador
 
-Responsable de usuarios, roles y permisos.
+Responsable de la creación de usuarios, asignación de roles y configuración técnica inicial de la base de datos.
 
 #### Director
 
-Responsable de la administración académica general.
+Responsable de la configuración académica (apertura del año lectivo, creación de aulas, asignación docente) y la visualización de reportes de rendimiento.
 
 #### Secretaria
 
-Responsable del registro de estudiantes, apoderados y matrículas.
+Responsable del registro de estudiantes, actualización de datos de apoderados y ejecución del proceso de matrícula.
 
+#### Docente
+
+Responsable de acceder a su carga académica asignada, registrar la asistencia diaria de sus estudiantes y procesar las calificaciones por periodo.
 #### Docente
 
 Responsable de consultar información académica asignada.
