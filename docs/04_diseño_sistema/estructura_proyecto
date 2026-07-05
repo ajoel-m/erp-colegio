@@ -1,53 +1,44 @@
-Árbol adaptado a netbeans
-
 src/
-└── com/
-    └── colegiosm/
-        ├── modelo/
-        │   ├── Estudiante.java
-        │   ├── Asistencia.java
-        │   ├── Evaluacion.java
-        │   ├── ActaDTO.java
-        │   ├── Matricula.java
-        │   └── ... (Clases POJO/DTO con atributos, getters y setters)
-        │
-        ├── dao/
-        │   ├── interfaces/
-        │   │   ├── IEstudianteDAO.java
-        │   │   └── ... (Contratos de operaciones CRUD)
-        │   ├── implementaciones/
-        │   │   ├── EstudianteDAOImpl.java
-        │   │   └── ... (Ejecución de sentencias SQL puras)
-        │   └── ReportesDAO.java  <-- Aislado de transacciones simples. Contiene joins complejos para promedios y actas
-        │
-        ├── controlador/
-        │   ├── EstudianteController.java
-        │   ├── AsistenciaController.java
-        │   ├── EvaluacionController.java
-        │   ├── ActasController.java
-        │   ├── MatriculaController.java
-        │   └── ... (Gestión de eventos y reglas de negocio)
-        │
-        ├── vista/
-        │   ├── FrmLogin.java
-        │   ├── FrmPrincipal.java
-        │   ├── FrmMatricula.java
-        │   ├── FrmAsistenciaEstudiantes.java
-        │   ├── FrmEvaluaciones.java
-        │   ├── FrmActasCierre.java
-        │   └── ... (Interfaces gráficas construidas con Java Swing)
-        │
-        └── util/
-            ├── ConexionDB.java (Patrón Singleton para conexión JDBC)
-            ├── SesionGlobal.java (Almacena el usuario logueado)
-            ├── exportacion/
-            │   ├── IExportadorStrategy.java
-            │   ├── ExportadorPDF.java
-            │   ├── ExportadorExcel.java
-            │   └── ...
-            ├── validadores/      
-            │   ├── EstudianteValidator.java (Validación de datos específicos de alumnos)
-            │   ├── PersonalValidator.java (Formatos de contrato, sueldos, cargos)
-            │   ├── InputValidator.java (Campos vacíos, expresiones regulares para correos, números y DNIs)    
-            │   └── ...
-            └── ...
+└── main/
+    └── java/
+        └── com/
+            └── erpcolegio/
+                ├── ErpColegio.java
+                ├── modelo/
+                │   ├── Estudiante.java
+                │   ├── Asistencia.java
+                │   ├── Evaluacion.java
+                │   ├── Acta.java
+                │   └── Matricula.java
+                │
+                ├── dao/
+                │   ├── EstudianteDAO.java
+                │   ├── AsistenciaDAO.java
+                │   ├── EvaluacionDAO.java
+                │   ├── MatriculaDAO.java
+                │   └── ReportesDAO.java
+                │
+                ├── controlador/
+                │   ├── EstudianteController.java
+                │   ├── AsistenciaController.java
+                │   ├── EvaluacionController.java
+                │   ├── ActasController.java
+                │   └── MatriculaController.java
+                │
+                ├── vista/
+                │   ├── FrmLogin.java
+                │   ├── FrmPrincipal.java
+                │   ├── FrmMatricula.java
+                │   ├── FrmAsistenciaEstudiantes.java
+                │   ├── FrmEvaluaciones.java
+                │   └── FrmActasCierre.java
+                │
+                └── util/
+                    ├── ConexionDB.java
+                    ├── SesionGlobal.java
+                    ├── exportacion
+                    │   └── ExportadorPDF.java
+                    └── validadores
+                        ├── EstudianteValidator.java
+                        ├── PersonalValidator.java
+                        └── InputValidator.java
