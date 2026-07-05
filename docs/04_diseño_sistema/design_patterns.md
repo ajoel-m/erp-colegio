@@ -9,6 +9,9 @@ Para asegurar un código limpio y evitar el fuerte acoplamiento entre los compon
 - **Singleton:** Patrón creacional aplicado de forma estricta a la clase gestora de la base de datos (`ConexionDB`). Garantiza la instanciación de una única conexión compartida a MySQL durante todo el ciclo de vida de la aplicación. Esto optimiza el consumo de memoria y previene bloqueos por sobrecarga de peticiones concurrentes a la base de datos.
 ### Principios Rectores de Desarrollo (SOLID)
 
+- **Strategy:** Patron de comportamiento para resolver la emisión de documentos sin romper la arquitectura. Se aplicará obligatoriamente sobre el módulo de Cierre y Actas (exportación de documentos en distintos formatos).
+    - Se crea una interfaz `IExportadorStrategy`. Se crean calses concretas como `ExportadorPDF` o `ExportadorExcel`.
+
 El desarrollo del código fuente en Java respetará los principios SOLID para garantizar la mantenibilidad y escalabilidad del MVP:
 
 - **Principio de Responsabilidad Única (SRP):** Cada clase tendrá un único propósito. La interfaz gráfica (`JFrame`) no procesará lógica, el `Controlador` no ejecutará sentencias SQL, y el `DAO` no validará reglas de negocio.
