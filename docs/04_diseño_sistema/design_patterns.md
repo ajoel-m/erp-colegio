@@ -14,7 +14,7 @@ Para asegurar un código limpio y evitar el fuerte acoplamiento entre los compon
 
 El desarrollo del código fuente en Java respetará los principios SOLID para garantizar la mantenibilidad y escalabilidad del MVP:
 
-- **Principio de Responsabilidad Única (SRP):** Cada clase tendrá un único propósito. La interfaz gráfica (`JFrame`) no procesará lógica, el `Controlador` no ejecutará sentencias SQL, y el `DAO` no validará reglas de negocio.
+- **Principio de Responsabilidad Única (SRP):** Cada clase tendrá un único propósito. La interfaz gráfica (`JFrame`) no procesará lógica, el `Controlador` no ejecutará sentencias SQL, y el `DAO` no validará reglas de negocio. el Controlador orquesta el flujo de información, pero delega la comprobación de integridad y formato de los datos a clases validadoras externas
     
 - **Principio de Abierto/Cerrado (OCP):** El sistema estará abierto a la extensión pero cerrado a la modificación. (Ejemplo: la futura implementación del patrón _Strategy_ para exportar reportes permitirá añadir nuevos formatos sin modificar el código existente).
     
