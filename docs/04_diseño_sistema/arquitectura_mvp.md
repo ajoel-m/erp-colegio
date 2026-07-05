@@ -6,3 +6,5 @@ El sistema se rige bajo una **Arquitectura Lógica de Tres Capas**, implementada
 - **Capa de Negocio (Controlador):** Actúa como el puente orquestador del sistema. Escucha los eventos generados por la Vista (botones, selección de tablas), ejecuta las reglas de negocio (ej. validación de disponibilidad de vacantes, validación de edades mínimas) y solicita el procesamiento de datos a la capa inferior.
     
 - **Capa de Acceso a Datos (Modelo):** Encargada de la persistencia de la información. Gestiona la conexión al motor de base de datos MySQL y ejecuta las sentencias SQL puras mediante la API JDBC.
+
+- **Componentes Transversales:** Las validaciones son utilidades transversales. El controlador delega a esta capa la verificación de tipos de datos, formatos y rangos antes de comunicarse con el DAO.
