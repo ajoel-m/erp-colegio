@@ -325,7 +325,7 @@ CREATE TABLE actas(
     fk_matricula INT NOT NULL,
     tipo_acta VARCHAR(100),
     fecha_emision DATE NOT NULL DEFAULT (CURRENT_DATE),
-    promedio_final INT NOT NULL CHECK(promedio_final BETWEEN 0 AND 20), 
+    promedio_final DECIMAL(5,2) NOT NULL CHECK(promedio_final BETWEEN 0 AND 20), 
     fk_tipo_situacion INT,
     estado VARCHAR(100),
     fk_colaborador_responsable INT NOT NULL,
