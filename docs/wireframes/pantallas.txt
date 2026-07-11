@@ -1,0 +1,257 @@
+# I. Contenedores y Acceso Principal
+1. FrmLogin (JDialog - Ventana Modal de Acceso)
++-------------------------------------------------+
+| :: Acceso al Sistema                      [X]   |
++-------------------------------------------------+
+|                                                 |
+|               [ LOGO COLEGIO ]                  |
+|                                                 |
+|      Usuario:                                   |
+|      [_________________________________]        |
+|                                                 |
+|      Contraseña:                                |
+|      [*********************************]        |
+|                                                 |
+|           [ INGRESAR ]   [ SALIR ]              |
+|                                                 |
+|  (i) Ingrese sus credenciales asignadas.        |
++-------------------------------------------------+
+
+2. FrmPrincipal (JFrame Maximizado - Contenedor MDI)
+Plaintext
++-----------------------------------------------------------------------------+
+| :: ERP Colegio Señor de los Milagros - [ Módulo Principal ]    [-] [O] [X]|
++-----------------------------------------------------------------------------+
+| Archivo  Mantenimiento  Académico  Matrículas  Asistencia  Evaluaciones ... |
++-----------------------------------------------------------------------------+
+|                                                                             |
+|                                                                             |
+|               ( El fondo tiene el logo de la institución )                  |
+|               ( Aquí se abren los JPanels internamente   )                  |
+|                                                                             |
+|                                                                             |
++-----------------------------------------------------------------------------+
+| Usuario: PCASTILLO  | Rol: SECRETARIA  | Año Lectivo Activo: 2026           |
++-----------------------------------------------------------------------------+
+
+
+II. Paneles Operativos de Gestión (Cargados en el JDesktopPane)
+3. pnlConfigAcademica (Mantenimiento de Estructura y Oferta de Aulas)
+Plaintext
++-----------------------------------------------------------------------------+
+| :: Configuración del Año Lectivo y Aulas                                    |
++-----------------------------------------------------------------------------+
+| [ Apertura de Año Lectivo ]                                                 |
+| Año: [ 2026 ]  Inicio: [ 01/03/2026 |v]  Fin: [ 20/12/2026 |v]  [ APERTURAR]|
+|-----------------------------------------------------------------------------|
+| [ Configuración de Vacantes por Grado/Sección (Solo años vigentes) ]        |
+| Año Lectivo: [ 2026 |v]   Nivel: [ primaria   |v]   Grado: [ 1° Grado     |v] |
+|                                                                             |
+| Sección:     [ A    |v]   Turno: [ MAÑANA     |v]   Vacantes: [ 30 ]        |
+|                                                                             |
+|                                                   [ AGREGAR AULA / SECCIÓN ] |
+|-----------------------------------------------------------------------------|
+| +-------+----------+-----------+---------+--------+----------+-----------+  |
+| | Año   | Nivel    | Grado     | Sección | Turno  | Vacantes | Ocupadas  |  |
+| +-------+----------+-----------+---------+--------+----------+-----------+  |
+| | 2026  | primaria | 1° Grado  | A       | MAÑANA | 30       | 0         |  |
+| | 2026  | primaria | 1° Grado  | B       | TARDE  | 25       | 0         |  |
+| +-------+----------+-----------+---------+--------+----------+-----------+  |
++-----------------------------------------------------------------------------+
+
+
+4. pnlGestionColab (Administración de Personal con Campo Dirección)
+Plaintext
++-----------------------------------------------------------------------------+
+| :: Gestión de Personal y Colaboradores                                      |
++-----------------------------------------------------------------------------+
+| [ Datos Personales ]                                                        |
+| DNI:       [______________] [Buscar]      F. Nac: [ DD/MM/YYYY |v]          |
+| Nombres:   [_________________________]    Apellidos: [____________________] |
+| Teléfono:  [______________]               Correo:    [____________________] |
+| Dirección: [______________________________________________________________] |
+|-----------------------------------------------------------------------------|
+| [ Datos Laborales e Institucionales ]                                       |
+| Cargo:     [ DOCENTE      |v]    Régimen:   [ CAS            |v]            |
+| F. Inicio: [ DD/MM/YYYY   |v]    Condición: [ CONTRATADO     |v]            |
+|-----------------------------------------------------------------------------|
+| [ Acceso al Sistema ]                                                       |
+| Generar Usuario: [x] (Si se marca, habilita los campos inferiores)          |
+| Usuario:   [ daaaaaa     ]    Rol: [ DOCENTE   |v]   Clave: [ ********* ]   |
+|-----------------------------------------------------------------------------|
+|              [ NUEVO ]      [ GUARDAR ]      [ DAR CESE ]                   |
++-----------------------------------------------------------------------------+
+
+
+5. pnlGestionEstudiantes (Población Estudiantil con Filtro y Auto-búsqueda)
+Plaintext
++-----------------------------------------------------------------------------+
+| :: Gestión de Estudiantes y Apoderados                                      |
++-----------------------------------------------------------------------------+
+| [ Datos del Estudiante ]                                                    |
+| DNI:       [______________]               Estado:    [ ACTIVO        |v]    |
+| Nombres:   [_________________________]    F. Nac:    [ DD/MM/YYYY    |v]    |
+| Apellidos: [_________________________]                                      |
+|-----------------------------------------------------------------------------|
+| [ Vínculo Familiar (Apoderado) ]                                            |
+| DNI Apoderado: [77123456] (Auto-busca al llegar a los 8 dígitos enteros)    |
+| Nombres:   [Anita Figue              ]    Parentesco: [ MADRE         |v]    |
+| Teléfono:  [912345678]                    Correo:     [ana@correo.com     ] |
+|-----------------------------------------------------------------------------|
+|        [ NUEVO ]     [ GUARDAR ]     [ DAR CESE ]     [ LIMPIAR ]           |
+|-----------------------------------------------------------------------------|
+| Búsqueda Rápida: [Fern                ] (Filtra la tabla al ir escribiendo) |
+| +----------+------------------------+---------------+------------+-------+  |
+| | DNI      | Alumno                 | Apoderado     | Parentesco | Estado|  |
+| +----------+------------------------+---------------+------------+-------+  |
+| | 77123456 | Fernandez, Lionnel     | Figue, Anita  | Madre      | Activo|  |
+| +----------+------------------------+---------------+------------+-------+  |
++-----------------------------------------------------------------------------+
+
+
+6. pnlAsignacionDocente (Distribución de Carga Académica Escolar)
+Plaintext
++-----------------------------------------------------------------------------+
+| :: Asignación de Carga Académica Docente                                    |
++-----------------------------------------------------------------------------+
+| Seleccione el Docente:                                                      |
+| Docente: [ Buscar por apellidos o DNI...                                |v] |
+|-----------------------------------------------------------------------------|
+| Planificación de Horarios:                                                  |
+| Año: [ 2026 |v]   Grado/Aula:  [ 1° Grado - "A" (primaria)              |v] |
+| Curso:     [ Matemática |v]   Día Semana:  [ lunes                      |v] |
+| H. Inicio: [ 08:00    ]   H. Fin:      [ 09:30    ]                         |
+|                                                                             |
+|                                                       [ AGREGAR ASIGNACIÓN ] |
+|-----------------------------------------------------------------------------|
+| Carga académica actual del docente seleccionado:                            |
+| +-------+----------+-----------+---------+--------------------+----------+  |
+| | Año   | Nivel    | Grado     | Sección | Asignatura         | Horario  |  |
+| +-------+----------+-----------+---------+--------------------+----------+  |
+| | 2026  | primaria | 1° Grado  | A       | Matemática         | Lunes    |  |
+| |       |          |           |         |                    | 08:00    |  |
+| +-------+----------+-----------+---------+--------------------+----------+  |
++-----------------------------------------------------------------------------+
+
+
+7. pnlMatricula (Registro Operativo de Matrículas con Validaciones)
+Plaintext
++-----------------------------------------------------------------------------+
+| :: Sistema ERP - Gestión de Matrícula Regular y Extemporánea                |
++-----------------------------------------------------------------------------+
+| [ Panel 1: Búsqueda y Datos del Estudiante ]                                |
+| DNI Estudiante: [77654321] (Auto-busca al llegar a los 8 dígitos enteros)   |
+|                                                                             |
+| Nombres:   [Lionel Andres                                                 ] |
+| Apellidos: [Messi Cuccitini                                               ] |
+| Edad:      [ 06 años ]                    Estado del Alumno: [ Activo     ] |
+|-----------------------------------------------------------------------------|
+| [ Panel 2: Selección Académica ]                                            |
+| Año Lectivo: [ 2026      |v]   Turno:                 [ MAÑANA        |v]   |
+| Nivel:       [ primaria  |v]   Grado:                 [ 1° Grado      |v]   |
+| Sección:     [ A         |v]   Vacantes Disponibles:  [ 14 ]                |
+| Estado Mat:  [ activa    |v]                                                |
+|-----------------------------------------------------------------------------|
+| [ Panel 3: Validaciones del Sistema (Solo Lectura) ]                        |
+| [X] Edad mínima validada según normativa institucional.                      |
+| [X] Disponibilidad de vacantes confirmada en el aula.                       |
+|                                                                             |
+|                                                       [ PROCESAR MATRÍCULA ] |
+|-----------------------------------------------------------------------------|
+| [ Panel 4: Historial de Matrículas del Estudiante ]                         |
+| +---------+------------+-----------+---------+--------------+-----------+  |
+| | Año     | Nivel      | Grado     | Sección | Estado Mat.  | Promedio  |  |
+| +---------+------------+-----------+---------+--------------+-----------+  |
+| | 2025    | inicial    | 5 Años    | B       | regularizada | 18.00     |  |
+| +---------+------------+-----------+---------+--------------+-----------+  |
++-----------------------------------------------------------------------------+
+
+
+8. pnlAsistenciaEstudiantes (Toma de Lista Diaria por Asignatura)
+Plaintext
++-----------------------------------------------------------------------------+
+| :: Registro de Asistencia Estudiantil - Módulo Docente                      |
++-----------------------------------------------------------------------------+
+| [ Filtro de Clase ]                                                         |
+| Mi Carga Académica: [ 1° Grado "A" - Matemática                         |v] |
+| Fecha de Clase:     [ 11/07/2026 |v]       [ CARGAR LISTA DE ESTUDIANTES ]  |
+|-----------------------------------------------------------------------------|
+| Marcar Todos como: [ Presentes ]  |  [ Ausentes ]                           |
+|                                                                             |
+| +----+----------------------------------+-------------------+-------------+ |
+| | N° | Estudiante                       | Estado Asistencia | Observación | |
+| +----+----------------------------------+-------------------+-------------+ |
+| | 1  | AQUILES CASTRO, PIERO            | [x] Presente      | [_________] | |
+| | 2  | NOBI NOBI, NOBITA                | [ ] Presente      | [Tardanza ] | |
+| | 3  | RAMIREZ SOTO, ANA                | [x] Presente      | [_________] | |
+| +----+----------------------------------+-------------------+-------------+ |
+|                                                                             |
+| Resumen: 28 Presentes | 1 Ausente                   [ GUARDAR ASISTENCIA ]  |
++-----------------------------------------------------------------------------+
+
+
+9. pnlControlPersonal (Simulador de Terminal de Marcación Laboral)
+Plaintext
++-------------------------------------------------+
+| :: Control de Asistencia de Personal Colaborador|
++-------------------------------------------------+
+|                                                 |
+|               [ 04:09:12 PM ]                   |
+|            11 de Julio de 2026                  |
+|                                                 |
+| Ingrese su DNI para registrar su marcación:     |
+| [________________________________]              |
+|                                                 |
+|     [ MARCAR ENTRADA ]     [ MARCAR SALIDA ]    |
+|                                                 |
+|-------------------------------------------------|
+| Últimas marcaciones del día:                    |
+| > 08:02 - Carlos Perez - Entrada registrada     |
+| > 13:00 - Alfredo Torres- Entrada registrada    |
++-------------------------------------------------+
+
+
+10. pnlEvaluaciones (Registro Tabular de Calificaciones del Bimestre)
+Plaintext
++-----------------------------------------------------------------------------+
+| :: Registro y Control de Calificaciones                                     |
++-----------------------------------------------------------------------------+
+| [ Selección de Curso y Periodo ]                                            |
+| Asignatura: [ 1° Grado "A" - Matemática |v]  Periodo: [ 1° Bimestre     |v] |
+| Tipo Ev:    [ Examen Parcial            |v]           [ NUEVA EVALUACIÓN ]  |
+|-----------------------------------------------------------------------------|
+| Ingrese las calificaciones (0.00 - 20.00). El promedio se calcula solo.     |
+| +----------------------------------+----------+----------+---------+------+ |
+| | Estudiante                       | Ev. Diar | Ex. Parc | Prom.   | Letra| |
+| +----------------------------------+----------+----------+---------+------+ |
+| | SANTI SANTI, SANTI               | 18.00    | [ 19.50] | 18.75   | AD   | |
+| | NOBI NOBI, NOBITA                | 05.00    | [ 08.00] | 06.50   | C    | |
+| +----------------------------------+----------+----------+---------+------+ |
+| (i) Celdas de Notas editables. Promedio y Letra calculados al perder foco. |
+|                                                     [ GUARDAR CALIFICACIONES ] |
++-----------------------------------------------------------------------------+
+
+
+11. pnlActasCierre (Consolidado de Actas y Bloqueo de Año)
+Plaintext
++-----------------------------------------------------------------------------+
+| :: Generación de Actas Oficiales y Cierre de Año Lectivo                    |
++-----------------------------------------------------------------------------+
+| [ 1. Generación de Actas Oficiales ]                                        |
+| Año: [ 2026 |v]   Nivel: [ primaria |v]   Grado/Aula: [ 1° Grado "A"    |v] |
+|                                                                             |
+| +----------------------------------+-------------+-------+----------------+ |
+| | Estudiante                       | Prom. Anual | Letra | Situación Final| |
+| +----------------------------------+-------------+-------+----------------+ |
+| | SANTI SANTI, SANTI               | 18.75       | AD    | PROMOVIDO      | |
+| | NOBI NOBI, NOBITA                | 06.50       | C     | REPITENTE      | |
+| +----------------------------------+-------------+-------+----------------+ |
+|                                                                             |
+| [ GENERAR Y FIRMAR ACTA ]   [ EXPORTAR A PDF ]                              |
+|-----------------------------------------------------------------------------|
+| [ 2. Cierre Institucional Bloqueante ]                                      |
+| (i) El cierre del año lectivo bloquea permanentemente la modificación de    |
+| notas y asistencias del periodo 2026. Habilita matrícula para 2027.         |
+|                                                                             |
+| Estado Actual: [ VIGENTE ]                       [ EJECUTAR CIERRE DE AÑO ] |
++-----------------------------------------------------------------------------+
