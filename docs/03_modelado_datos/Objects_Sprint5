@@ -1,0 +1,228 @@
+-- Parte 1. pnlAsistenciaEstudiantes
+
+-- Vista para carga de asistencia
+CREATE OR REPLACE VIEW vw_carga_asistencia AS
+SELECT aa.idAsignacionAcademica, aa.fk_docente AS idDocente, al.idAnioLectivo, al.anio, al.estado AS estadoAnio, gsa.idGradoSeccionAnio,
+CONCAT(g.grado, '° ', s.nombre_seccion, ' - ', asi.nombre_asignatura, ' - ', al.anio, ' - ', IFNULL(GROUP_CONCAT(CONCAT(ha.dia_semana, ' ', TIME_FORMAT(ha.hora_inicio,'%H:%i'), ' a ', TIME_FORMAT(ha.hora_fin,'%H:%i')) ORDER BY FIELD(ha.dia_semana,'lunes','martes','miercoles','jueves','viernes'), ha.hora_inicio SEPARATOR ', '), 'Sin horario')) AS carga
+FROM asignaciones_academicas aa
+INNER JOIN asignaturas_grados ag ON aa.fk_asignatura_grado = ag.idAsignaturaGrado
+INNER JOIN asignaturas asi ON ag.fk_asignatura = asi.idAsignatura
+INNER JOIN grado_seccion_anio gsa ON aa.fk_grado_seccion_anio = gsa.idGradoSeccionAnio
+INNER JOIN grados g ON gsa.fk_grado = g.idGrado
+INNER JOIN secciones s ON gsa.fk_seccion = s.idSeccion
+INNER JOIN anios_lectivos al ON gsa.fk_anio = al.idAnioLectivo
+LEFT JOIN horarios_asignaturas ha ON aa.idAsignacionAcademica = ha.fk_asignacion_academica
+GROUP BY aa.idAsignacionAcademica, aa.fk_docente, al.idAnioLectivo, al.anio, al.estado, gsa.idGradoSeccionAnio, g.grado, s.nombre_seccion, asi.nombre_asignatura;
+
+-- Carga estudiantes matriculados en el aula correspondiente a la asignación académica
+CREATE OR REPLACE VIEW vw_estudiantes_asistencia AS
+SELECT aa.idAsignacionAcademica, m.fk_anio_lectivo AS idAnioLectivo, m.fk_grado_seccion_anio AS idGradoSeccionAnio, e.idEstudiante, p.dni_ce,
+CONCAT(p.apellido1, ' ', p.apellido2, ', ', p.nombre1) AS estudiante, m.estado_matricula
+FROM asignaciones_academicas aa
+INNER JOIN matriculas m ON aa.fk_grado_seccion_anio = m.fk_grado_seccion_anio
+INNER JOIN estudiantes e ON m.fk_estudiante = e.idEstudiante
+INNER JOIN personas p ON e.fk_persona = p.idPersona
+WHERE m.estado_matricula IN ('activa','condicional','regularizada');
+
+-- listar carga de asistencia por rol
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_listar_carga_asistencia//
+CREATE PROCEDURE sp_listar_carga_asistencia(IN p_idColaborador INT, IN p_rol VARCHAR(50))
+BEGIN
+    SELECT idAsignacionAcademica, idDocente, idAnioLectivo, anio, estadoAnio, idGradoSeccionAnio, carga
+    FROM vw_carga_asistencia
+    WHERE (LOWER(p_rol) = 'docente' AND idDocente = p_idColaborador) OR LOWER(p_rol) IN ('director','secretaria','secretaría')
+    ORDER BY anio DESC, carga;
+END//
+
+DELIMITER ;
+
+-- procedimiento para cargar la asistencia del estudiante
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_cargar_asistencia_estudiantes//
+CREATE PROCEDURE sp_cargar_asistencia_estudiantes(IN p_idAsignacionAcademica INT, IN p_fecha DATE)
+BEGIN
+    SELECT vea.idEstudiante, vea.dni_ce, vea.estudiante, COALESCE(ae.esta_presente, 0) AS esta_presente
+    FROM vw_estudiantes_asistencia vea
+    LEFT JOIN asistencias_estudiantes ae ON vea.idEstudiante = ae.fk_estudiante AND vea.idAsignacionAcademica = ae.fk_asignacion_academica AND ae.fecha_asistencia = p_fecha
+    WHERE vea.idAsignacionAcademica = p_idAsignacionAcademica
+    ORDER BY vea.estudiante;
+END//
+
+DELIMITER ;
+
+-- procedimiento para guardar la asistenica de un estuidante y modificarlo (no mayor a 7 dias)
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_guardar_asistencia_estudiante//
+CREATE PROCEDURE sp_guardar_asistencia_estudiante(IN p_idAsignacionAcademica INT, IN p_idEstudiante INT, IN p_fecha DATE, IN p_estaPresente BIT, IN p_idDocenteSesion INT)
+BEGIN
+    DECLARE v_idDocente INT;
+    DECLARE v_estadoAnio VARCHAR(20);
+    DECLARE v_fechaInicio DATE;
+    DECLARE v_fechaFin DATE;
+    DECLARE v_idGradoSeccionAnio INT;
+    DECLARE v_existeMatricula INT DEFAULT 0;
+
+    SELECT aa.fk_docente, al.estado, al.fecha_inicio, al.fecha_fin, aa.fk_grado_seccion_anio
+    INTO v_idDocente, v_estadoAnio, v_fechaInicio, v_fechaFin, v_idGradoSeccionAnio
+    FROM asignaciones_academicas aa
+    INNER JOIN grado_seccion_anio gsa ON aa.fk_grado_seccion_anio = gsa.idGradoSeccionAnio
+    INNER JOIN anios_lectivos al ON gsa.fk_anio = al.idAnioLectivo
+    WHERE aa.idAsignacionAcademica = p_idAsignacionAcademica;
+    IF v_idDocente IS NULL THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'La asignación académica no existe';
+    END IF;
+    IF v_idDocente <> p_idDocenteSesion THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Solo el docente asignado puede registrar o modificar esta asistencia';
+    END IF;
+    IF v_estadoAnio = 'FINALIZADO' THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No se puede modificar asistencia de un año lectivo finalizado';
+    END IF;
+    IF p_fecha > CURRENT_DATE THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No se puede registrar asistencia en una fecha futura';
+    END IF;
+    IF p_fecha < DATE_SUB(CURRENT_DATE, INTERVAL 7 DAY) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No se puede modificar asistencia con más de una semana de antigüedad';
+    END IF;
+    IF p_fecha < v_fechaInicio OR p_fecha > v_fechaFin THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'La fecha no pertenece al rango del año lectivo';
+    END IF;
+    SELECT COUNT(*) INTO v_existeMatricula
+    FROM matriculas
+    WHERE fk_estudiante = p_idEstudiante AND fk_grado_seccion_anio = v_idGradoSeccionAnio AND estado_matricula IN ('activa','condicional','regularizada');
+    IF v_existeMatricula = 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El estudiante no tiene matrícula válida para esta asignación';
+    END IF;
+
+    INSERT INTO asistencias_estudiantes(fecha_asistencia, esta_presente, fk_estudiante, fk_asignacion_academica)
+    VALUES(p_fecha, p_estaPresente, p_idEstudiante, p_idAsignacionAcademica)
+    ON DUPLICATE KEY UPDATE esta_presente = p_estaPresente;
+END//
+
+DELIMITER ;
+
+-- PARTE 2. pnlControlPersonal
+-- Vista de colaboradores activos para marcación
+CREATE OR REPLACE VIEW vw_colaboradores_control_personal AS
+SELECT c.idColaborador, p.dni_ce, CONCAT(p.apellido1, ' ', p.apellido2, ', ', p.nombre1) AS colaborador, c.condicion_laboral
+FROM colaboradores c
+INNER JOIN personas p ON c.fk_persona = p.idPersona
+WHERE LOWER(c.condicion_laboral) = 'activo';
+
+-- Vista de marcaciones del día
+CREATE OR REPLACE VIEW vw_marcaciones_personal_dia AS
+SELECT ac.fecha, ac.hora_entrada AS hora, vcp.colaborador, 'Entrada' AS accion, IF(ac.hay_tardanza = 1, 'Tardanza', 'Puntual') AS estado
+FROM asistencias_colaboradores ac
+INNER JOIN vw_colaboradores_control_personal vcp ON ac.fk_colaborador = vcp.idColaborador
+WHERE ac.fecha = CURRENT_DATE AND ac.hora_entrada IS NOT NULL
+UNION ALL
+SELECT ac.fecha, ac.hora_salida AS hora, vcp.colaborador, 'Salida' AS accion, 'Registrada' AS estado
+FROM asistencias_colaboradores ac
+INNER JOIN vw_colaboradores_control_personal vcp ON ac.fk_colaborador = vcp.idColaborador
+WHERE ac.fecha = CURRENT_DATE AND ac.hora_salida IS NOT NULL;
+
+DELIMITER //
+
+-- Marcar entrada del colaborador
+DROP PROCEDURE IF EXISTS sp_marcar_entrada_personal//
+CREATE PROCEDURE sp_marcar_entrada_personal(IN p_dni VARCHAR(12))
+BEGIN
+    DECLARE v_idColaborador INT DEFAULT NULL;
+    DECLARE v_colaborador VARCHAR(150);
+    DECLARE v_idAnioLectivo INT DEFAULT NULL;
+    DECLARE v_hora TIME;
+    DECLARE v_hayTardanza BIT DEFAULT 0;
+    DECLARE v_noEncontrado BIT DEFAULT 0;
+
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET v_noEncontrado = 1;
+
+    SELECT idColaborador, colaborador INTO v_idColaborador, v_colaborador
+    FROM vw_colaboradores_control_personal
+    WHERE dni_ce = p_dni
+    LIMIT 1;
+
+    IF v_idColaborador IS NULL THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No existe un colaborador activo con el DNI ingresado';
+    END IF;
+
+    SET v_noEncontrado = 0;
+
+    SELECT idAnioLectivo INTO v_idAnioLectivo
+    FROM anios_lectivos
+    WHERE estado = 'VIGENTE'
+    ORDER BY idAnioLectivo
+    LIMIT 1;
+
+    IF v_idAnioLectivo IS NULL THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No existe un año lectivo vigente para registrar la asistencia';
+    END IF;
+
+    IF EXISTS(SELECT 1 FROM asistencias_colaboradores WHERE fk_colaborador = v_idColaborador AND fecha = CURRENT_DATE) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El colaborador ya registró entrada el día de hoy';
+    END IF;
+
+    SET v_hora = CURRENT_TIME;
+    SET v_hayTardanza = CASE WHEN v_hora < '13:00:00' THEN v_hora > '08:10:00' ELSE v_hora > '13:10:00' END;
+
+    INSERT INTO asistencias_colaboradores(fecha, esta_presente, hay_tardanza, hora_entrada, hora_salida, fk_colaborador, fk_anio_lectivo)
+    VALUES(CURRENT_DATE, 1, v_hayTardanza, v_hora, NULL, v_idColaborador, v_idAnioLectivo);
+
+    SELECT v_colaborador AS colaborador, 'ENTRADA' AS tipo, v_hora AS hora, IF(v_hayTardanza = 1, 'TARDANZA', 'PUNTUAL') AS estado;
+END//
+
+-- Marcar salida del colaborador
+DROP PROCEDURE IF EXISTS sp_marcar_salida_personal//
+CREATE PROCEDURE sp_marcar_salida_personal(IN p_dni VARCHAR(12))
+BEGIN
+    DECLARE v_idColaborador INT DEFAULT NULL;
+    DECLARE v_colaborador VARCHAR(150);
+    DECLARE v_horaEntrada TIME DEFAULT NULL;
+    DECLARE v_horaSalida TIME DEFAULT NULL;
+    DECLARE v_hora TIME;
+
+    DECLARE CONTINUE HANDLER FOR NOT FOUND BEGIN END;
+
+    SELECT idColaborador, colaborador INTO v_idColaborador, v_colaborador
+    FROM vw_colaboradores_control_personal
+    WHERE dni_ce = p_dni
+    LIMIT 1;
+
+    IF v_idColaborador IS NULL THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No existe un colaborador activo con el DNI ingresado';
+    END IF;
+
+    SELECT hora_entrada, hora_salida INTO v_horaEntrada, v_horaSalida
+    FROM asistencias_colaboradores
+    WHERE fk_colaborador = v_idColaborador AND fecha = CURRENT_DATE
+    LIMIT 1;
+
+    IF v_horaEntrada IS NULL THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No se puede registrar salida sin entrada previa';
+    END IF;
+
+    IF v_horaSalida IS NOT NULL THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El colaborador ya registró salida el día de hoy';
+    END IF;
+
+    SET v_hora = CURRENT_TIME;
+
+    UPDATE asistencias_colaboradores
+    SET hora_salida = v_hora
+    WHERE fk_colaborador = v_idColaborador AND fecha = CURRENT_DATE;
+
+    SELECT v_colaborador AS colaborador, 'SALIDA' AS tipo, v_hora AS hora, 'REGISTRADA' AS estado;
+END//
+
+-- Listar últimas marcaciones del día
+DROP PROCEDURE IF EXISTS sp_listar_marcaciones_personal_dia//
+CREATE PROCEDURE sp_listar_marcaciones_personal_dia()
+BEGIN
+    SELECT hora, colaborador, accion, estado
+    FROM vw_marcaciones_personal_dia
+    ORDER BY hora DESC;
+END//
+
+DELIMITER ;
