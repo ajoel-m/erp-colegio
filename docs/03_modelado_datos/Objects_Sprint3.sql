@@ -34,6 +34,7 @@ SELECT
     pa.nombre2 AS nom2Apo, 
     pa.apellido1 AS ape1Apo, 
     pa.apellido2 AS ape2Apo, 
+    pa.fecha_nacimiento AS fecNacApo,
     pa.telefono, 
     pa.direccion AS direccionApo, 
     pa.correo, 
@@ -45,6 +46,7 @@ LEFT JOIN apoderados_estudiantes ae ON e.idEstudiante = ae.fk_estudiante
 LEFT JOIN apoderados a ON ae.fk_apoderado = a.idApoderado
 LEFT JOIN personas pa ON a.fk_persona = pa.idPersona
 LEFT JOIN cat_parentescos cp ON ae.fk_parentesco = cp.idParentesco;
+
 
 DELIMITER //
 
@@ -63,6 +65,7 @@ CREATE PROCEDURE sp_registrar_estudiante(
     IN p_nom2Apo VARCHAR(30), 
     IN p_ape1Apo VARCHAR(40), 
     IN p_ape2Apo VARCHAR(40), 
+    IN p_fecNacApo DATE, 
     IN p_tel CHAR(9), 
     IN p_dirApo VARCHAR(200), 
     IN p_correo VARCHAR(100), 
@@ -82,7 +85,6 @@ BEGIN
 
     START TRANSACTION;
 
-    -- Inserción o actualización de la persona del estudiante
     SELECT idPersona INTO v_idPersEst FROM personas WHERE dni_ce = p_dniEst;
     IF v_idPersEst IS NULL THEN
         INSERT INTO personas (dni_ce, nombre1, nombre2, apellido1, apellido2, fecha_nacimiento, direccion, telefono, correo)
@@ -94,31 +96,28 @@ BEGIN
         WHERE idPersona = v_idPersEst;
     END IF;
 
-    -- Creación del registro en estudiantes
     INSERT INTO estudiantes (fk_persona, fk_estado_estudiante) 
     VALUES (v_idPersEst, p_idEstado);
     SET v_idEstudiante = LAST_INSERT_ID();
 
-    -- Inserción o actualización de la persona del apoderado (Almacena dirección física)
+
     SELECT idPersona INTO v_idPersApo FROM personas WHERE dni_ce = p_dniApo;
     IF v_idPersApo IS NULL THEN
         INSERT INTO personas (dni_ce, nombre1, nombre2, apellido1, apellido2, fecha_nacimiento, telefono, direccion, correo)
-        VALUES (p_dniApo, p_nom1Apo, p_nom2Apo, p_ape1Apo, p_ape2Apo, '1970-01-01', p_tel, p_dirApo, p_correo);
+        VALUES (p_dniApo, p_nom1Apo, p_nom2Apo, p_ape1Apo, p_ape2Apo, p_fecNacApo, p_tel, p_dirApo, p_correo);
         SET v_idPersApo = LAST_INSERT_ID();
     ELSE
         UPDATE personas 
-        SET nombre1 = p_nom1Apo, nombre2 = p_nom2Apo, apellido1 = p_ape1Apo, apellido2 = p_ape2Apo, telefono = p_tel, direccion = p_dirApo, correo = p_correo 
+        SET nombre1 = p_nom1Apo, nombre2 = p_nom2Apo, apellido1 = p_ape1Apo, apellido2 = p_ape2Apo, fecha_nacimiento = p_fecNacApo, telefono = p_tel, direccion = p_dirApo, correo = p_correo 
         WHERE idPersona = v_idPersApo;
     END IF;
 
-    -- Creación o reutilización de la entidad apoderado
     SELECT idApoderado INTO v_idApoderado FROM apoderados WHERE fk_persona = v_idPersApo;
     IF v_idApoderado IS NULL THEN
         INSERT INTO apoderados (fk_persona) VALUES (v_idPersApo);
         SET v_idApoderado = LAST_INSERT_ID();
     END IF;
 
-    -- Vinculación definitiva en la tabla intermedia
     INSERT INTO apoderados_estudiantes (fk_apoderado, fk_estudiante, fk_parentesco) 
     VALUES (v_idApoderado, v_idEstudiante, p_idParentesco);
 
@@ -144,6 +143,7 @@ CREATE PROCEDURE sp_actualizar_estudiante(
     IN p_nom2Apo VARCHAR(30), 
     IN p_ape1Apo VARCHAR(40), 
     IN p_ape2Apo VARCHAR(40), 
+    IN p_fecNacApo DATE, 
     IN p_tel CHAR(9), 
     IN p_dirApo VARCHAR(200), 
     IN p_correo VARCHAR(100), 
@@ -158,22 +158,18 @@ BEGIN
 
     START TRANSACTION;
 
-    -- Sincronización de datos personales del alumno
     UPDATE personas 
     SET dni_ce = p_dniEst, nombre1 = p_nom1Est, nombre2 = p_nom2Est, apellido1 = p_ape1Est, apellido2 = p_ape2Est, fecha_nacimiento = p_fecNacEst 
     WHERE idPersona = p_idPersEst;
     
-    -- Sincronización de estado del alumno
     UPDATE estudiantes 
     SET fk_estado_estudiante = p_idEstado 
     WHERE idEstudiante = p_idEstudiante;
     
-    -- Sincronización de datos personales del apoderado
     UPDATE personas 
-    SET dni_ce = p_dniApo, nombre1 = p_nom1Apo, nombre2 = p_nom2Apo, apellido1 = p_ape1Apo, apellido2 = p_ape2Apo, telefono = p_tel, direccion = p_dirApo, correo = p_correo 
+    SET dni_ce = p_dniApo, nombre1 = p_nom1Apo, nombre2 = p_nom2Apo, apellido1 = p_ape1Apo, apellido2 = p_ape2Apo, fecha_nacimiento = p_fecNacApo, telefono = p_tel, direccion = p_dirApo, correo = p_correo 
     WHERE idPersona = p_idPersApo;
     
-    -- Sincronización del tipo de parentesco del vínculo familiar
     UPDATE apoderados_estudiantes 
     SET fk_parentesco = p_idParentesco 
     WHERE fk_estudiante = p_idEstudiante AND fk_apoderado = p_idApoderado;
