@@ -1,0 +1,805 @@
+Wireframes corregidos — Sprints 4 al 7
+Criterios generales
+Los paneles se cargan dentro del contenedor central de FrmPrincipal.
+Los JComboBox de catálogos podrán:
+mostrar valores con el formato [id] - [contenido].
+No se mostrarán identificadores internos al usuario salvo que resulten útiles para distinguir registros.
+Los campos derivados se mostrarán como etiquetas o campos no editables.
+Los valores NOT NULL que no sean seleccionados directamente se obtendrán desde la sesión o desde registros relacionados.
+La validación definitiva de cruces, vacantes y transacciones se realizará en la base de datos.
+  
+Sprint 4: Planificación y Matrícula
+1. pnlAsignacionDocente
+Propósito
+
+Asignar a un docente una asignatura correspondiente a un grado y aula determinada, junto con uno o varios bloques horarios, validando:
+
+cruces del docente;
+cruces del aula;
+correspondencia entre asignatura y grado;
+existencia del año lectivo y aula;
+vigencia laboral del docente.
+Wireframe
++----------------------------------------------------------------------------------+
+| :: Asignación de Carga Académica Docente                                         |
++----------------------------------------------------------------------------------+
+| [ 1. Selección del docente ]                                                     |
+|                                                                                  |
+| Docente: [ Buscar o seleccionar docente activo...                            |v] |
+|                                                                                  |
+| Estado laboral: [ ACTIVO ]        Cargo: [ DOCENTE ]                             |
++----------------------------------------------------------------------------------+
+| [ 2. Configuración de la asignación académica ]                                  |
+|                                                                                  |
+| Año Lectivo: [ 2026 - VIGENTE |v]                                                |
+| Aula:        [ Primaria - 1° - Sección A - MAÑANA                            |v] |
+| Asignatura:  [ Matemática                                                    |v] |
+|                                                                                  |
+| Día:         [ lunes         |v]                                                 |
+| Hora Inicio: [ 08:00           ]       Hora Fin: [ 09:30           ]             |
+|                                                                                  |
+|                                                    [ AGREGAR BLOQUE HORARIO ]     |
++----------------------------------------------------------------------------------+
+| [ 3. Carga académica del docente seleccionado ]                                  |
+|                                                                                  |
+| +------+------------+-------+---------+-------------+----------+---------------+ |
+| | Año  | Nivel      | Grado | Sección | Asignatura  | Día      | Horario       | |
+| +------+------------+-------+---------+-------------+----------+---------------+ |
+| | 2026 | primaria   | 1°    | A       | Matemática  | lunes    | 08:00 - 09:30 | |
+| | 2026 | primaria   | 1°    | A       | Matemática  | miércoles| 08:00 - 09:30 | |
+| | 2026 | secundaria | 2°    | B       | Matemática  | viernes  | 10:00 - 11:30 | |
+| +------+------------+-------+---------+-------------+----------+---------------+ |
+|                                                                                  |
+| [ QUITAR CARGA ACADÉMICA COMPLETA ]                                              |
++----------------------------------------------------------------------------------+
+| (i) Al quitar una carga se eliminarán la asignación seleccionada y todos sus      |
+|     horarios, siempre que todavía no tenga asistencias, evaluaciones, notas o     |
+|     actas relacionadas.                                                          |
++----------------------------------------------------------------------------------+
+Componentes Swing
+cbDocente
+lblEstadoLaboral
+lblCargoDocente
+
+cbAnioLectivo
+cbGradoAula
+cbAsignatura
+cbDiaSemana
+txtHoraInicio
+txtHoraFin
+
+btnAgregarBloqueHorario
+
+tblCargaHoraria
+btnQuitarAsignacion
+Comportamiento
+cbDocente
+
+Debe cargar únicamente colaboradores que cumplan:
+
+categoría = DOCENTE
+fin_contrato IS NULL
+
+Al cambiar de docente:
+
+actualiza lblEstadoLaboral;
+actualiza lblCargoDocente;
+carga tblCargaHoraria.
+cbAnioLectivo
+
+Debe cargar años lectivos disponibles. Para registrar nuevas asignaciones se debe priorizar el año VIGENTE.
+
+Al cambiar:
+
+filtra cbGradoAula;
+limpia asignatura y horario.
+cbGradoAula
+
+Debe representar directamente un registro de grado_seccion_anio, incluyendo:
+
+nivel;
+grado;
+sección;
+turno;
+año.
+
+Ejemplo visible:
+
+Primaria - 1° - Sección A - MAÑANA
+
+Internamente conserva:
+
+idGradoSeccionAnio
+fkGrado
+cbAsignatura
+
+Solo carga registros de asignaturas_grados vinculados al grado del aula seleccionada.
+
+No debe cargar todas las asignaturas del catálogo.
+
+btnAgregarBloqueHorario
+
+Registra:
+
+La cabecera en asignaciones_academicas, si todavía no existe.
+El bloque en horarios_asignaturas.
+
+Debe validar:
+
+todos los selectores;
+formato de horas;
+hora final posterior a la inicial;
+cruce del docente;
+cruce del aula;
+duplicidad exacta;
+que el año permita planificación.
+btnQuitarAsignacion
+
+No elimina únicamente una fila de horarios_asignaturas.
+
+La fila seleccionada identifica una asignaciones_academicas. La operación elimina:
+
+Todos sus registros en horarios_asignaturas.
+La fila de asignaciones_academicas.
+
+Debe rechazarse cuando la carga tenga registros en:
+
+ponderaciones_evaluacion;
+evaluaciones;
+asistencias_estudiantes;
+calificaciones_finales_periodo;
+detalle_acta.
+Decisión sobre selección de días
+
+Se utilizará un solo cbDiaSemana por registro.
+
+No se usarán cinco JCheckBox, porque cada bloque horario debe registrarse y eliminarse individualmente y puede tener horas diferentes.
+
+2. pnlMatricula
+Propósito
+
+Registrar una matrícula para un estudiante existente, verificando:
+
+identidad del estudiante;
+estado institucional;
+edad reglamentaria para primer grado;
+disponibilidad de vacantes;
+existencia del aula;
+inexistencia de otra matrícula en el mismo año;
+autorización para matrícula extemporánea;
+usuario registrador.
+Wireframe
++----------------------------------------------------------------------------------+
+| :: Gestión de Matrículas                                                        |
++----------------------------------------------------------------------------------+
+| [ 1. Búsqueda del estudiante ]                                                   |
+|                                                                                  |
+| DNI: [ 77654321             ]                         [ BUSCAR ESTUDIANTE ]       |
+|                                                                                  |
+| Estudiante: [ MESSI CUCCITINI, LIONEL ANDRÉS                              ]      |
+| Edad:       [ 6 años ]                Estado institucional: [ ACTIVO ]            |
++----------------------------------------------------------------------------------+
+| [ 2. Tipo y estado de matrícula ]                                                |
+|                                                                                  |
+| Tipo de matrícula: [ REGULAR       |v]                                           |
+| Estado matrícula:  [ activa        |v]                                           |
+|                                                                                  |
+| Autorización de Dirección: [ NO REQUERIDA ]                                      |
++----------------------------------------------------------------------------------+
+| [ 3. Ubicación académica ]                                                       |
+|                                                                                  |
+| Año Lectivo: [ 2026 - VIGENTE |v]                                                |
+| Nivel:       [ primaria       |v]                                                |
+| Grado:       [ 1° Grado       |v]                                                |
+| Aula:        [ Sección A - MAÑANA                                            |v] |
+|                                                                                  |
+| Capacidad: [ 30 ]   Ocupadas: [ 16 ]   Disponibles: [ 14 ]                       |
++----------------------------------------------------------------------------------+
+| [ 4. Validaciones automáticas ]                                                  |
+|                                                                                  |
+| [X] Estudiante encontrado y activo.                                              |
+| [X] No posee otra matrícula en el año seleccionado.                              |
+| [X] Edad reglamentaria validada para el grado seleccionado.                      |
+| [X] El aula dispone de vacantes.                                                 |
+| [X] El año lectivo permite registrar matrículas.                                 |
+|                                                                                  |
+|                                                     [ PROCESAR MATRÍCULA ]        |
++----------------------------------------------------------------------------------+
+| [ 5. Historial institucional ]                                                   |
+|                                                                                  |
+| +------+------------+-------+---------+---------+---------------+--------------+ |
+| | Año  | Nivel      | Grado | Sección | Turno   | Estado Mat.   | Prom. Anual  | |
+| +------+------------+-------+---------+---------+---------------+--------------+ |
+| | 2025 | primaria   | 1°    | B       | TARDE   | regularizada  | 16.80        | |
+| +------+------------+-------+---------+---------+---------------+--------------+ |
++----------------------------------------------------------------------------------+
+| Registrado por: [ SECRETARIA - MARÍA PÉREZ ]                                     |
++----------------------------------------------------------------------------------+
+Componentes Swing
+txtDniEstudiante
+btnBuscarEstudiante
+lblNombreEstudiante
+lblEdadEstudiante
+lblEstadoEstudiante
+
+cbTipoMatricula
+cbEstadoMatricula
+lblAutorizacionDireccion
+
+cbAnioLectivo
+cbNivel
+cbGrado
+cbGradoSeccionAnio
+
+lblCapacidad
+lblVacantesOcupadas
+lblVacantesDisponibles
+
+chkEstudianteValido
+chkMatriculaAnualValidada
+chkEdadValidada
+chkVacantesValidadas
+chkAnioHabilitado
+
+btnProcesarMatricula
+
+tblHistorialMatriculas
+lblUsuarioRegistrador
+Comportamiento
+Búsqueda por DNI
+
+El sistema trabajará exclusivamente con DNI:
+
+8 dígitos numéricos
+
+La búsqueda puede ejecutarse:
+
+automáticamente al completar ocho dígitos; y
+manualmente mediante btnBuscarEstudiante.
+
+Se conserva el botón para facilitar reintentos y evitar que la operación dependa solo de KeyReleased.
+
+Nombre y apellidos
+
+Se muestran en una sola etiqueta:
+
+APELLIDO1 APELLIDO2, NOMBRE1 NOMBRE2
+
+No son editables en este panel.
+
+Tipo de matrícula
+
+Opciones funcionales:
+
+REGULAR
+EXTEMPORÁNEA
+
+Este dato no existe actualmente en matriculas, por lo que debe tratarse de una de estas maneras:
+
+derivarse de las fechas del cronograma; o
+incorporarse formalmente al modelo antes de persistirlo.
+
+No debe inventarse una columna durante la implementación.
+
+Cuando sea EXTEMPORÁNEA, la interfaz debe exigir la autorización correspondiente según la versión ajustada de RN-15.
+
+Estado de matrícula
+
+Valores exactos del DDL:
+
+condicional
+regularizada
+retirada
+activa
+
+Para una nueva matrícula no debería seleccionarse normalmente retirada.
+
+Selección académica
+
+Los combos funcionan en cascada:
+
+Año
+→ Nivel
+→ Grado
+→ Aula real de grado_seccion_anio
+
+cbGradoSeccionAnio muestra una combinación existente:
+
+Sección A - MAÑANA
+
+No se seleccionan sección y turno independientemente.
+
+Vacantes
+
+Se calculan así:
+
+vacantes disponibles =
+grado_seccion_anio.vacantes
+- matrículas ocupantes
+
+Ocupan vacante:
+
+condicional
+regularizada
+activa
+
+No ocupa vacante:
+
+retirada
+Registrador
+
+fk_colaborador_registrador se obtiene desde la sesión:
+
+SesionGlobal
+→ idUsuario
+→ fkColaborador
+
+No se permite procesar si el usuario autenticado no tiene colaborador asociado.
+
+Historial
+
+No incluye educación inicial.
+
+El promedio anual puede provenir de actas.promedio_final. Si todavía no existe acta, se muestra:
+
+PENDIENTE
+
+o una celda vacía.
+
+Sprint 5: Operación Diaria
+3. pnlAsistenciaEstudiantes
+Propósito
+
+Registrar la asistencia de estudiantes por asignación académica y fecha, cumpliendo la RN-21 y la restricción de acceso docente RN-06.
+
+Wireframe
++----------------------------------------------------------------------------------+
+| :: Registro de Asistencia Estudiantil                                            |
++----------------------------------------------------------------------------------+
+| [ 1. Selección de clase ]                                                        |
+|                                                                                  |
+| Mi carga académica: [ 1° A - Matemática - Lunes 08:00 a 09:30                |v] |
+| Fecha de clase:     [ 11/07/2026 |v]                                             |
+|                                                                                  |
+|                                               [ CARGAR LISTA DE ESTUDIANTES ]     |
++----------------------------------------------------------------------------------+
+| [ 2. Registro de asistencia ]                                                    |
+|                                                                                  |
+| Acciones masivas: [ MARCAR PRESENTES ] [ MARCAR AUSENTES ]                       |
+|                                                                                  |
+| +----+----------+--------------------------------+----------+-------------------+ |
+| | N° | DNI      | Estudiante                     | Presente | Observación       | |
+| +----+----------+--------------------------------+----------+-------------------+ |
+| | 1  | 71234568 | CASTRO PÉREZ, PIERO            |   [X]    |                   | |
+| | 2  | 74589621 | NOBI NOBI, NOBITA              |   [ ]    | Tardanza          | |
+| | 3  | 75214639 | RAMÍREZ SOTO, ANA              |   [X]    |                   | |
+| +----+----------+--------------------------------+----------+-------------------+ |
+|                                                                                  |
+| Resumen: [ 28 presentes ] [ 1 ausente ]                                          |
+|                                                                                  |
+|                                                    [ GUARDAR ASISTENCIA ]         |
++----------------------------------------------------------------------------------+
+| Estado del registro: [ NUEVO / REGISTRADO / MODIFICABLE ]                        |
++----------------------------------------------------------------------------------+
+Componentes Swing
+cbCargaDocente
+dcFechaClase
+btnCargarLista
+
+btnMarcarPresentes
+btnMarcarAusentes
+
+tblAsistenciaEst
+lblPresentes
+lblAusentes
+lblEstadoRegistro
+
+btnGuardarAsistencia
+Columnas de tblAsistenciaEst
+N°
+DNI
+Estudiante
+Presente
+Observación
+
+La columna Presente será Boolean.
+
+La columna Observación será editable y opcional.
+
+Comportamiento
+Carga académica
+
+Para usuarios con rol docente, solo se muestran asignaciones cuyo:
+
+fk_docente = colaborador de la sesión
+
+Puede mostrarse:
+
+aula;
+asignatura;
+día;
+horario.
+
+No es obligatorio filtrar exclusivamente por la hora actual, porque el docente puede registrar o corregir una clase del mismo periodo.
+
+Lista de estudiantes
+
+Se cargan estudiantes con matrículas:
+
+activa
+condicional
+regularizada
+
+Se excluyen:
+
+retirada
+Guardado
+
+Si no existe asistencia:
+
+INSERT
+
+Si ya existe por la restricción:
+
+fk_estudiante
++ fecha_asistencia
++ fk_asignacion_academica
+
+se debe:
+
+UPDATE
+
+No se debe intentar insertar duplicados.
+
+Año finalizado
+
+Cuando el año se encuentre FINALIZADO, los controles de edición y guardado quedan deshabilitados según la RN-25 ajustada.
+
+4. pnlControlPersonal
+Propósito
+
+Registrar la entrada o salida diaria del personal e indicar puntualidad o tardanza utilizando una tolerancia de diez minutos.
+
+Wireframe
++------------------------------------------------------------------+
+| :: Control de Asistencia del Personal                             |
++------------------------------------------------------------------+
+|                                                                  |
+|                         [ 07:45:12 ]                              |
+|                      11 de julio de 2026                           |
+|                                                                  |
+| DNI del colaborador:                                              |
+| [________________________________________]                         |
+|                                                                  |
+|               [ MARCAR ENTRADA ]   [ MARCAR SALIDA ]              |
+|                                                                  |
++------------------------------------------------------------------+
+| Resultado de la marcación                                         |
+|                                                                  |
+| Colaborador: [ PÉREZ GARCÍA, CARLOS ]                             |
+| Tipo:        [ ENTRADA ]                                          |
+| Hora:        [ 07:45:12 ]                                         |
+| Estado:      [ PUNTUAL ]                                          |
++------------------------------------------------------------------+
+| Últimas marcaciones del día                                       |
+|                                                                  |
+| +----------+------------------------------+---------+------------+ |
+| | Hora     | Colaborador                  | Acción  | Estado     | |
+| +----------+------------------------------+---------+------------+ |
+| | 07:42:10 | MORALES TORRES, ANA          | Entrada | Puntual    | |
+| | 07:55:41 | PÉREZ GARCÍA, CARLOS         | Entrada | Tardanza   | |
+| | 13:02:03 | FLORES RAMÍREZ, LUIS         | Salida  | Registrada | |
+| +----------+------------------------------+---------+------------+ |
++------------------------------------------------------------------+
+Componentes Swing
+lblRelojDigital
+lblFechaActual
+
+txtDniPersonal
+btnMarcarEntrada
+btnMarcarSalida
+
+lblColaboradorMarcacion
+lblTipoMarcacion
+lblHoraMarcacion
+lblEstadoMarcacion
+
+tblMarcacionesDia
+Consideración necesaria
+
+Para calcular tardanza se necesita conocer la hora esperada de entrada.
+
+La tolerancia definida es:
+
+10 minutos
+
+Pero el DDL actual no contiene una tabla de horarios laborales. Antes de implementar el módulo debe existir una fuente válida para la hora programada:
+
+una tabla de horarios laborales; o
+una regla institucional única documentada.
+
+No se debe quemar una hora dentro del código Java.
+
+Operación de entrada
+
+Debe insertar:
+
+fecha
+esta_presente = 1
+hay_tardanza
+hora_entrada
+fk_colaborador
+fk_anio_lectivo
+Operación de salida
+
+Debe actualizar la misma fila del día:
+
+hora_salida
+
+No debe insertar una segunda asistencia.
+
+Triggers
+
+La interfaz mostrará los errores devueltos cuando:
+
+se intente registrar salida sin entrada;
+la salida sea anterior o igual a la entrada.
+Sprint 6: Evaluación Académica
+5. pnlEvaluaciones
+Propósito
+
+Crear evaluaciones, registrar puntajes por estudiante y calcular los promedios finales del periodo aplicando las ponderaciones configuradas.
+
+Wireframe
++----------------------------------------------------------------------------------+
+| :: Registro y Control de Evaluaciones                                            |
++----------------------------------------------------------------------------------+
+| [ 1. Selección académica ]                                                       |
+|                                                                                  |
+| Carga académica: [ 1° A - Matemática                                         |v] |
+| Periodo:         [ 1° Bimestre                                               |v] |
+|                                                                                  |
++----------------------------------------------------------------------------------+
+| [ 2. Apertura de evaluación ]                                                    |
+|                                                                                  |
+| Tipo evaluación: [ Examen Parcial                                            |v] |
+| Peso configurado: [ 0.40 ]                                                       |
+| Fecha evaluación: [ 15/07/2026 |v]                                               |
+|                                                                                  |
+|                                                   [ NUEVA EVALUACIÓN ]            |
++----------------------------------------------------------------------------------+
+| [ 3. Registro de puntajes ]                                                      |
+|                                                                                  |
+| Evaluación activa: [ Examen Parcial - 15/07/2026 ]                               |
+|                                                                                  |
+| +----+----------+--------------------------------+-----------+------------------+ |
+| | N° | DNI      | Estudiante                     | Puntaje   | Observación      | |
+| +----+----------+--------------------------------+-----------+------------------+ |
+| | 1  | 71234568 | CASTRO PÉREZ, PIERO            | [ 16.00 ] |                  | |
+| | 2  | 74589621 | NOBI NOBI, NOBITA              | [ 11.00 ] | Recuperación     | |
+| | 3  | 75214639 | RAMÍREZ SOTO, ANA              | [ 18.50 ] |                  | |
+| +----+----------+--------------------------------+-----------+------------------+ |
+|                                                                                  |
+|                                             [ GUARDAR RESULTADOS ]                |
++----------------------------------------------------------------------------------+
+| [ 4. Consolidado del periodo ]                                                   |
+|                                                                                  |
+| +--------------------------------+-----------+-----------+-----------+----------+ |
+| | Estudiante                     | Ev. Diaria| Ex. Parc. | Promedio  | Letra    | |
+| +--------------------------------+-----------+-----------+-----------+----------+ |
+| | CASTRO PÉREZ, PIERO            | 14.00     | 16.00     | 14.80     | B        | |
+| | NOBI NOBI, NOBITA              | 08.00     | 11.00     | 09.20     | C        | |
+| | RAMÍREZ SOTO, ANA              | 18.00     | 18.50     | 18.20     | AD       | |
+| +--------------------------------+-----------+-----------+-----------+----------+ |
+|                                                                                  |
+|                                     [ RECALCULAR Y GUARDAR PROMEDIOS ]            |
++----------------------------------------------------------------------------------+
+Componentes Swing
+cbCursoAsignado
+cbPeriodoLectivo
+
+cbTipoEvaluacion
+lblPesoEvaluacion
+dcFechaEvaluacion
+btnNuevaEvaluacion
+
+lblEvaluacionActiva
+tblResultadosEvaluacion
+btnGuardarResultados
+
+tblConsolidadoPeriodo
+btnRecalcularPromedios
+Separación funcional
+
+El panel tendrá dos operaciones diferenciadas.
+
+A. Crear y calificar una evaluación
+
+Trabaja con:
+
+evaluaciones
+resultados_estudiantes
+
+Cada nueva evaluación requiere obligatoriamente:
+
+fecha
+fk_tipo_evaluacion
+fk_asignacion_academica
+fk_periodo_lectivo
+
+Cada resultado requiere:
+
+puntaje
+fk_estudiante
+fk_evaluaciones
+
+La observación es opcional.
+
+B. Consolidar el periodo
+
+Trabaja con:
+
+ponderaciones_evaluacion
+calificaciones_finales_periodo
+
+El promedio se calcula usando pesos fraccionarios:
+
+0.40
+0.30
+0.30
+
+La suma debe ser:
+
+1.00
+Escala alfabética
+AD: 18.00 a 20.00
+A:  15.00 a 17.99
+B:  11.00 a 14.99
+C:   0.00 a 10.99
+
+La conversión alfabética es de visualización y reporte, aunque el DDL actual también permite almacenarla en:
+
+calificaciones_finales_periodo
+detalle_acta
+
+La lógica debe mantenerse centralizada para evitar diferencias entre Java, consultas y reportes.
+
+Seguridad
+
+Solo el docente propietario de la asignación puede:
+
+crear evaluaciones;
+registrar resultados;
+modificar notas.
+
+Director puede consultar. Cualquier permiso adicional debe quedar definido por rol.
+
+Sprint 7: Cierre Institucional
+6. pnlActasCierre
+Propósito
+
+Consolidar los resultados anuales, generar actas con sus detalles, determinar la situación final y cambiar el estado del año lectivo.
+
+Wireframe
++----------------------------------------------------------------------------------+
+| :: Generación de Actas y Cierre del Año Lectivo                                 |
++----------------------------------------------------------------------------------+
+| [ 1. Selección del aula ]                                                       |
+|                                                                                  |
+| Año Lectivo: [ 2026 - VIGENTE |v]                                                |
+| Nivel:       [ primaria       |v]                                                |
+| Grado/Aula:  [ 1° Grado - Sección A - MAÑANA                                |v] |
+|                                                                                  |
+|                                                   [ CARGAR CONSOLIDADO ]          |
++----------------------------------------------------------------------------------+
+| [ 2. Consolidado anual ]                                                        |
+|                                                                                  |
+| +----+----------+-------------------------------+----------+-------+------------+ |
+| | N° | DNI      | Estudiante                    | Promedio | Letra | Situación  | |
+| +----+----------+-------------------------------+----------+-------+------------+ |
+| | 1  | 71234568 | CASTRO PÉREZ, PIERO           | 16.80    | A     | PROMOVIDO  | |
+| | 2  | 74589621 | NOBI NOBI, NOBITA             | 10.50    | C     | REPITENTE  | |
+| | 3  | 75214639 | RAMÍREZ SOTO, ANA             | 18.40    | AD    | PROMOVIDO  | |
+| +----+----------+-------------------------------+----------+-------+------------+ |
+|                                                                                  |
+| Responsable: [ DIRECTOR - JUAN RAMÍREZ ]                                         |
+|                                                                                  |
+|                         [ GENERAR ACTAS ]     [ EXPORTAR ACTAS A PDF ]            |
++----------------------------------------------------------------------------------+
+| [ 3. Detalle académico del estudiante seleccionado ]                            |
+|                                                                                  |
+| +-------------------------------+------------+--------+------------------------+ |
+| | Asignatura                    | Nota Final | Letra  | Recuperación           | |
+| +-------------------------------+------------+--------+------------------------+ |
+| | Matemática                    | 16.50      | A      | No requerida           | |
+| | Comunicación                  | 10.00      | C      | Pendiente              | |
+| +-------------------------------+------------+--------+------------------------+ |
++----------------------------------------------------------------------------------+
+| [ 4. Cierre institucional ]                                                      |
+|                                                                                  |
+| Estado actual del año: [ VIGENTE ]                                               |
+|                                                                                  |
+| (i) Al finalizar el año, la interfaz deshabilitará el registro y modificación     |
+|     de asistencias, evaluaciones y calificaciones relacionadas con dicho año.     |
+|                                                                                  |
+|                                              [ EJECUTAR CIERRE DE AÑO ]           |
++----------------------------------------------------------------------------------+
+Componentes Swing
+cbAnioFiltro
+cbNivelFiltro
+cbAulaFiltro
+btnCargarConsolidado
+
+tblConsolidadoAnual
+lblResponsableActas
+btnGenerarActas
+btnExportarPdf
+
+tblDetalleActa
+
+lblEstadoAnio
+btnEjecutarCierre
+Generación de actas
+
+La operación debe insertar transaccionalmente:
+
+actas
+fk_matricula
+tipo_acta
+fecha_emision
+promedio_final
+fk_tipo_situacion
+estado
+fk_colaborador_responsable
+observaciones
+
+Los campos opcionales pueden enviarse como NULL cuando corresponda.
+
+detalle_acta
+
+Por cada asignación académica:
+
+fk_acta
+fk_asignacion_academica
+nota_final
+calificacion_alfabetica
+Responsable
+
+fk_colaborador_responsable se obtiene desde la sesión del usuario autorizado.
+
+El botón debe decir:
+
+GENERAR ACTAS
+
+No:
+
+GENERAR Y FIRMAR
+
+porque no se implementará firma digital.
+
+Exportación
+
+btnExportarPdf utiliza JasperReports o el mecanismo de exportación definido, pero la generación del PDF no implica una firma.
+
+Situación final
+
+Los valores deben existir previamente en:
+
+tipos_situacion_final
+
+Por ejemplo:
+
+PROMOVIDO
+REPITENTE
+
+La determinación se realiza mediante la regla de negocio correspondiente, no únicamente por el promedio general mostrado en el ejemplo si existen condiciones adicionales por asignatura.
+
+Cierre del año
+
+La operación actualiza:
+
+anios_lectivos.estado = 'FINALIZADO'
+
+Después de ello, la aplicación deshabilita controles relacionados con ese año.
+
+No debe presentarse como bloqueo irreversible en la base de datos mientras el DDL no incluya mecanismos adicionales.
